@@ -47,7 +47,7 @@ int main(void)
     //printf("%i\n", CRCLength % numberOfBitsPerByte);
     int byte = 0;
 
-    for (int bit = 1; bit < numberOfBits; bit++)
+    /*for (int bit = 1; bit < numberOfBits; bit++)
     {
         byte = (bit - 1) / numberOfBitsPerByte;
         //printf("%i\n", (bit % numberOfBitsPerByte));
@@ -81,9 +81,32 @@ int main(void)
         //}
         //printf("%i %i\n", byte, bit);
         //printf("%i\n", reminder);
-    }
+    }*/
 
-    //0000101100110101
+    //0000101100110101 2869
+
+    int next_input_bit = 0;
+    int multiple = 0;
+    for (int bit = 1; bit < numberOfBits; bit++)
+    {
+        byte = (bit - 1) / numberOfBitsPerByte;
+        next_input_bit = (message[byte] & 1 << (bit - 1) % numberOfBitsPerByte) << (14 - ((bit - 1) % numberOfBitsPerByte - 1));
+        //printf("%i\n", next_input_bit);
+        reminder ^= next_input_bit;
+        multiple = (reminder & 1) ? RRRPOLYNOMIAL : 0;
+        reminder = reminder ^ multiple;
+        for (int i = 15; i > -1; i--)
+        {
+            printf("%i", (reminder >> i) & 1);
+        }
+        reminder = (reminder >> 1);
+        printf("\n");
+    }
+    /*for (int i = 15; i > -1; i--)
+    {
+        printf("%i", (reminder >> i) & 1);
+    }
+    printf("\n");*/
 
     /*for (int byte = 0; byte < sizeOfMessage; byte++)
     {
@@ -92,16 +115,26 @@ int main(void)
         { // Assuming 8 bits per byte
             if (reminder & 0x0001U)
             { // if rightmost (most significant) bit is set
-                reminder = (reminder >> 1) ^ POLYNOMIAL;
+                reminder = (reminder >> 1) ^ RRRPOLYNOMIAL;
             }
             else
             {
                 reminder = (reminder >> 1);
             }
         }
-        printf("%i\n", reminder);
+        //printf("%i\n", reminder);
+        for (int i = 15; i > -1; i--)
+        {
+            printf("%i", (reminder >> i) & 1);
+        }
+        printf("\n");
+    }*/
+    /*for (int i = 15; i > -1; i--)
+    {
+        printf("%i", (reminder >> i) & 1);
     }
-    reminder = reminder & 0x7FFFU;
+    printf("\n");*/
+    //reminder = reminder & 0x7FFFU;
     uint8_t reminderFront = (reminder >> 8);
     uint8_t reminderBack = reminder;
 
@@ -110,10 +143,10 @@ int main(void)
     message[12] = reminderFront;
     message[13] = reminderBack;
 
-    for (int i = 0; i < sizeOfMessage; i++)
+    /*for (int i = 0; i < sizeOfMessage; i++)
     {
         printf("%c\n", (char)message[i]);
-    }
+    }*/
 
     //message[1] = 'a';
 
@@ -121,27 +154,28 @@ int main(void)
     // If the remainder is zero print "The data is OK\n";
     // otherwise print "The data is not OK\n"
 
-    reminder = 0;
-    printf("%i\n", reminder);
-    for (int i = 0; i < sizeOfMessage; i++)
+    /*reminder = 0;
+    //printf("%i\n", reminder);
+    for (int byte = 0; byte < sizeOfMessage; byte++)
     {
-        reminder = reminder ^ message[i];
-        for (int j = 1; j <= 8; j++)
+        reminder = reminder ^ message[byte];
+        for (int bit = 0; bit < 8; bit++)
         { // Assuming 8 bits per byte
-            if (reminder & 0x0001)
+            if (reminder & 0x0001U)
             { // if rightmost (most significant) bit is set
-                reminder = (reminder >> 1) ^ POLYNOMIAL;
+                reminder = (reminder >> 1) ^ RRRPOLYNOMIAL;
             }
             else
             {
                 reminder = (reminder >> 1);
             }
         }
+        //printf("%i\n", reminder);
     }
 
-    printf("%i\n", reminder);
+    printf("%i\n", reminder);*/
 
-    reminderFront = (reminder >> 8);
+    /*reminderFront = (reminder >> 8);
     reminderBack = reminder;
 
     printf("%i , %i\n", reminderFront, reminderBack);
