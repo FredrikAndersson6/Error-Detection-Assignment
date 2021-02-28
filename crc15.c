@@ -2,7 +2,9 @@
 #include <stdint.h>
 
 #define POLYNOMIAL 0xC599U // The CAN protocol uses the CRC-15 with this polynomial
-// Polynomial is equal to binary number 1100 0101 1001 1001 which is 16 in length
+// Polynomial is equal to binary number 11000101 10011001 which is 16 in length
+
+#define RPOLYNOMIAL 0x99A3U
 
 int main(void)
 {
@@ -24,11 +26,81 @@ int main(void)
     //So the message should look something like {'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!', r, r};
     //with r,r representing the reminder bits.
 
-    message[1] = 'a';
+    // Least significant bit first (little-endian)
+    // x^16+x^12+x^5+1 = 1000 0100 0000 1000 (1) = 0x8408
+
+    unsigned int reminder = 0;
+    printf("%i\n", reminder ^ message[0]);
+    int sizeOfMessage = sizeof message / sizeof message[0];
+    printf("%i\n", sizeOfMessage);
+
+    for (int i = 0; i < sizeOfMessage; i++)
+    {
+        reminder = reminder ^ message[i];
+        for (int j = 1; j <= 8; j++)
+        { // Assuming 8 bits per byte
+            if (reminder & 0x0001)
+            { // if rightmost (most significant) bit is set
+                reminder = (reminder >> 1) ^ POLYNOMIAL;
+            }
+            else
+            {
+                reminder = (reminder >> 1);
+            }
+        }
+    }
+
+    uint8_t reminderFront = (reminder >> 8);
+    uint8_t reminderBack = reminder;
+
+    printf("%i, %i, %i\n", reminder, reminderFront, reminderBack);
+
+    message[12] = reminderFront;
+    message[13] = reminderBack;
+
+    for (int i = 0; i < sizeOfMessage; i++)
+    {
+        printf("%c\n", (char)message[i]);
+    }
+
+    //message[1] = 'a';
 
     // Validate the message.
     // If the remainder is zero print "The data is OK\n";
     // otherwise print "The data is not OK\n"
+
+    reminder = 0;
+    printf("%i\n", reminder);
+    for (int i = 0; i < sizeOfMessage; i++)
+    {
+        reminder = reminder ^ message[i];
+        for (int j = 1; j <= 8; j++)
+        { // Assuming 8 bits per byte
+            if (reminder & 0x0001)
+            { // if rightmost (most significant) bit is set
+                reminder = (reminder >> 1) ^ POLYNOMIAL;
+            }
+            else
+            {
+                reminder = (reminder >> 1);
+            }
+        }
+    }
+
+    printf("%i\n", reminder);
+
+    reminderFront = (reminder >> 8);
+    reminderBack = reminder;
+
+    printf("%i , %i\n", reminderFront, reminderBack);
+
+    message[12] = reminderFront;
+    message[13] = reminderBack;
+
+    for (int i = 0; i < sizeOfMessage; i++)
+    {
+        printf("%c\n", (char)message[i]);
+    }
 
     return 0;
 }
