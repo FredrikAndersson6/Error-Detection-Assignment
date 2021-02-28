@@ -47,7 +47,7 @@ int main(void)
     //printf("%i\n", CRCLength % numberOfBitsPerByte);
     int byte = 0;
 
-    for (int bit = 1; bit < numberOfBits; bit++)
+    for (int bit = 1; bit < numberOfBits + 1; bit++)
     {
         byte = (bit - 1) / numberOfBitsPerByte;
         //printf("%i\n", (bit % numberOfBitsPerByte));
