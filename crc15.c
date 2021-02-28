@@ -49,6 +49,7 @@ int main(void)
 
     for (int bit = 1; bit < numberOfBits + 1; bit++)
     {
+        reminder = (reminder << 1);
         byte = (bit - 1) / numberOfBitsPerByte;
         //printf("%i\n", (bit % numberOfBitsPerByte));
         if (message[byte] & (1 << ((bit - 1) % numberOfBitsPerByte)))
@@ -58,26 +59,25 @@ int main(void)
         //reminder = reminder & 0x7FFFU;
 
         //printf("%i\n", (1 + bit % numberOfBitsPerByte));
-        for (int i = 15; i > -1; i--)
+        /*for (int i = 15; i > -1; i--)
         {
             printf("%i", (reminder >> i) & 1);
         }
-        printf("\n");
+        printf("\n");*/
         //if (CRCLength <= bit && CRCLength <= numberOfBits - bit)
         //{
         //printf("%i %i\n", byte, bit);
         if (reminder & (1 << 15))
         {
             reminder = reminder ^ POLYNOMIAL;
-            printf("%i %i\n", byte, bit);
+            /*printf("%i %i\n", byte, bit);
             for (int i = 15; i > -1; i--)
             {
                 printf("%i", (reminder >> i) & 1);
             }
-            printf("\n");
+            printf("\n");*/
         }
 
-        reminder = (reminder << 1);
         //}
         //printf("%i %i\n", byte, bit);
         //printf("%i\n", reminder);
@@ -129,19 +129,59 @@ int main(void)
         }
         printf("\n");
     }*/
+    //reminder = (reminder << 1);
     /*for (int i = 15; i > -1; i--)
     {
         printf("%i", (reminder >> i) & 1);
     }
     printf("\n");*/
     //reminder = reminder & 0x7FFFU;
+
     uint8_t reminderFront = (reminder >> 8);
     uint8_t reminderBack = reminder;
 
-    printf("%i, %i, %i\n", reminder, reminderFront, reminderBack);
+    /*for (int i = 15; i > -1; i--)
+    {
+        printf("%i", (reminderFront >> i) & 1);
+    }
+    printf("\n");
+    for (int i = 15; i > -1; i--)
+    {
+        printf("%i", (reminderBack >> i) & 1);
+    }
+    printf("\n");
 
-    message[12] = reminderFront;
-    message[13] = reminderBack;
+    printf("%i, %i, %i\n", reminder, reminderFront, reminderBack);*/
+    for (int bit = 1; bit <= 8; bit++)
+    {
+        message[12] = (message[12] << 1);
+        if (reminderFront & 1)
+        {
+            message[12] = message[12] | 1;
+        }
+        reminderFront = (reminderFront >> 1);
+        message[13] = (message[13] << 1);
+        if (reminderBack & 1)
+        {
+            message[13] = message[13] | 1;
+        }
+        reminderBack = (reminderBack >> 1);
+    }
+    /*for (int i = 15; i > -1; i--)
+    {
+        printf("%i", (message[12] >> i) & 1);
+    }
+    printf("\n");
+    for (int i = 15; i > -1; i--)
+    {
+        printf("%i", (message[13] >> i) & 1);
+    }
+    printf("\n");
+    printf("%i, %i\n", reminderFront, reminderBack);*/
+    //message[12] = reminderFront;
+    //message[12] = 208;
+    //message[13] = reminderBack;
+    //message[13] = 172;
 
     /*for (int i = 0; i < sizeOfMessage; i++)
     {
@@ -187,6 +227,42 @@ int main(void)
     {
         printf("%c\n", (char)message[i]);
     }*/
+    reminder = 0;
+    for (int bit = 1; bit < numberOfBits + 1; bit++)
+    {
+        reminder = (reminder << 1);
+        byte = (bit - 1) / numberOfBitsPerByte;
+        //printf("%i\n", (bit % numberOfBitsPerByte));
+        if (message[byte] & (1 << ((bit - 1) % numberOfBitsPerByte)))
+        {
+            reminder = reminder | 1 << 0;
+        }
+        //reminder = reminder & 0x7FFFU;
 
+        //printf("%i\n", (1 + bit % numberOfBitsPerByte));
+        /*for (int i = 15; i > -1; i--)
+        {
+            printf("%i", (reminder >> i) & 1);
+        }
+        printf("\n");*/
+        //if (CRCLength <= bit && CRCLength <= numberOfBits - bit)
+        //{
+        //printf("%i %i\n", byte, bit);
+        if (reminder & (1 << 15))
+        {
+            reminder = reminder ^ POLYNOMIAL;
+            /*printf("%i %i\n", byte, bit);
+            for (int i = 15; i > -1; i--)
+            {
+                printf("%i", (reminder >> i) & 1);
+            }
+            printf("\n");*/
+        }
+
+        //}
+        //printf("%i %i\n", byte, bit);
+        //printf("%i\n", reminder);
+    }
+    printf("%i\n", reminder);
     return 0;
 }
