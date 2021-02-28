@@ -47,13 +47,13 @@ int main(void)
     //printf("%i\n", CRCLength % numberOfBitsPerByte);
     int byte = 0;
 
-    /*for (int bit = 1; bit < numberOfBits; bit++)
+    for (int bit = 1; bit < numberOfBits; bit++)
     {
         byte = (bit - 1) / numberOfBitsPerByte;
         //printf("%i\n", (bit % numberOfBitsPerByte));
         if (message[byte] & (1 << ((bit - 1) % numberOfBitsPerByte)))
         {
-            reminder = reminder | 1 << 15;
+            reminder = reminder | 1 << 0;
         }
         //reminder = reminder & 0x7FFFU;
 
@@ -66,9 +66,9 @@ int main(void)
         //if (CRCLength <= bit && CRCLength <= numberOfBits - bit)
         //{
         //printf("%i %i\n", byte, bit);
-        if (reminder & 1)
+        if (reminder & (1 << 15))
         {
-            reminder = reminder ^ RRRPOLYNOMIAL;
+            reminder = reminder ^ POLYNOMIAL;
             printf("%i %i\n", byte, bit);
             for (int i = 15; i > -1; i--)
             {
@@ -77,15 +77,15 @@ int main(void)
             printf("\n");
         }
 
-        reminder = (reminder >> 1);
+        reminder = (reminder << 1);
         //}
         //printf("%i %i\n", byte, bit);
         //printf("%i\n", reminder);
-    }*/
+    }
 
     //0000101100110101 2869
 
-    int next_input_bit = 0;
+    /*int next_input_bit = 0;
     int multiple = 0;
     for (int bit = 1; bit < numberOfBits; bit++)
     {
@@ -101,7 +101,7 @@ int main(void)
         }
         reminder = (reminder >> 1);
         printf("\n");
-    }
+    }*/
     /*for (int i = 15; i > -1; i--)
     {
         printf("%i", (reminder >> i) & 1);
